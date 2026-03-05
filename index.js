@@ -8,6 +8,7 @@ require('dotenv').config();
 var flash = require('express-flash')
 var session = require('express-session')
 var cookieParser = require('cookie-parser')
+const path = require('path')
 
 
 
@@ -34,7 +35,7 @@ const systemConfig = require('./config/system');
 // ======================
 // 5. View Engine Setup
 // ======================
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 
@@ -49,7 +50,7 @@ app.locals.prefixAdmin = systemConfig.prefixAdmin;
 // ======================
 app.use(express.urlencoded({ extended: true })); // Parse form data
 app.use(methodOverride('_method')); // Support PUT/PATCH/DELETE via ?_method=
-app.use(express.static('public')); // Static files (css, js, images)
+app.use(express.static(path.join(__dirname, 'public'))); // Static files (css, js, images)
 app.use(cookieParser(process.env.KEY_BOARD_CAT));
 app.use(session({
   secret: process.env.KEY_BOARD_CAT,
