@@ -1,0 +1,88 @@
+/* Reset nhẹ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body full height */
+html, body {
+    height: 100%;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f4f6f9;
+}
+
+/* Header */
+header {
+    background: #343a40;
+    color: white;
+    padding: 15px 20px;
+}
+
+/* Layout chính */
+.body {
+    display: flex;
+    min-height: calc(100vh - 100px); /* trừ header + footer */
+}
+
+/* Sidebar */
+.sider {
+    width: 250px;
+    background: #212529;
+    color: white;
+    padding: 20px;
+}
+
+.sider ul {
+    list-style: none;
+}
+
+.sider ul li {
+    margin-bottom: 15px;
+}
+
+.sider ul li a {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sider ul li a:hover {
+    color: white;
+}
+
+/* Main content */
+.main {
+    flex: 1;
+    padding: 20px;
+    background: white;
+}
+
+/* Footer */
+footer {
+    background: #343a40;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+/* Flash Messages */
+.alert {
+    animation: slideDown 0.4s ease-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-dismissible .close {
+    cursor: pointer;
+}

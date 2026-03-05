@@ -1,0 +1,71 @@
+extends ../../layouts/default.pug
+
+block main
+  h1 Thùng rác sản phẩm
+
+  .card.mb-3
+    .card-header Danh sách sản phẩm đã xóa
+    .card-body
+      if products.length > 0
+        table.table.table-hover.table-sm
+          thead
+            tr
+              th STT
+              th Hình ảnh
+              th Tiêu đề
+              th Giá
+              th Trạng thái
+              th Hành động
+
+          tbody
+            each item, index in products
+              tr
+                td #{index + 1}
+
+                td
+                  img(
+                    src=item.thumbnail
+                    alt=item.title
+                    width="100"
+                  )
+
+                td #{item.title}
+                td #{item.price}$
+
+                td
+                  if item.status == "active"
+                    span.badge.badge-success Hoạt động
+                  else
+                    span.badge.badge-danger Không hoạt động
+
+                td
+                  button.btn.btn-success.btn-sm(
+                    button-restore
+                    data-id=item._id
+                  ) Khôi phục
+                  button.btn.btn-danger.btn-sm.ml-1(
+                    button-delete-permanent
+                    data-id=item._id
+                  ) Xóa vĩnh viễn
+      else
+        p.text-muted Thùng rác trống
+
+  .mt-3
+    a.btn.btn-primary(href=`${prefixAdmin}/products`) Quay lại danh sách sản phẩm
+
+  // Forms ẩn để restore và xóa vĩnh viễn
+  form(
+    action=""
+    method="POST"
+    id="form-restore"
+    data-path=`${prefixAdmin}/products/restore`
+  )
+
+  form(
+    action=""
+    method="POST"
+    id="form-delete-permanent"
+    data-path=`${prefixAdmin}/products/delete-permanent`
+  )
+
+

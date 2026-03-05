@@ -1,0 +1,40 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+  .container.my-5
+    .row
+      .col-12
+        .box-head.text-center.mb-5
+          +box-head("Danh sách sản phẩm")
+
+    .row.g-4
+      each item in products 
+        .col-lg-4.col-md-6.col-sm-12.mb-4
+          .product-item
+            .product-item__badge
+              span -#{item.discountPercentage}%
+            
+            .product-item__image
+              img(src=item.thumbnail, alt=item.title)
+            
+            .product-item__content
+              h3.product-item__title #{item.title}
+              
+              .product-item__price
+                span.product-item__price-new 
+                  | #{(item.price * (100 - item.discountPercentage) / 100).toFixed(0)}$
+                span.product-item__price-old #{item.price}$
+              
+              .product-item__status
+                if item.status == "active"
+                  span.badge.badge-success Còn hàng
+                else
+                  span.badge.badge-danger Hết hàng
+              
+              .product-item__actions
+                a.btn.btn-primary.btn-sm(href=`/products/${item.slug}`)
+                  | 👁 Chi tiết
+                button.btn.btn-success.btn-sm(href="#")
+                  | 🛒 Thêm vào giỏ
+    

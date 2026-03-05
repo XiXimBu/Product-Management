@@ -1,0 +1,105 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+  if product
+    .container.my-5
+      .row
+        .col-12
+          .box-head.text-center.mb-5
+            +box-head("Chi tiết sản phẩm")
+
+      .row.g-4
+        .col-lg-6.mb-4
+          .product-detail__image-container
+            if product.discountPercentage > 0
+              .product-detail__badge
+                span -#{product.discountPercentage}%
+            img.product-detail__image(src=product.thumbnail, alt=product.title)
+
+        .col-lg-6
+          .product-detail__info
+            h1.product-detail__title #{product.title}
+            
+            .product-detail__rating
+              span.stars ⭐⭐⭐⭐⭐ (142 đánh giá)
+            
+            .product-detail__price-box
+              .product-detail__price-section
+                span.product-detail__label Giá:
+                span.product-detail__price-new 
+                  | #{(product.price * (100 - product.discountPercentage) / 100).toFixed(0)}$
+                
+                if product.discountPercentage > 0
+                  span.product-detail__price-old #{product.price}$
+                  span.product-detail__discount -#{product.discountPercentage}%
+            
+            .product-detail__status-box
+              span.product-detail__label Tình trạng:
+              if product.status == "active"
+                span.badge.badge-success.badge-lg Còn hàng (#{product.stock} sản phẩm)
+              else
+                span.badge.badge-danger.badge-lg Hết hàng
+            
+            .product-detail__quantity-box
+              span.product-detail__label Số lượng:
+              .product-detail__quantity
+                button.qty-btn.qty-btn-minus(type="button" id="qty-minus") −
+                input.qty-input(type="number" value="1" min="1" max=product.stock id="qty-input")
+                button.qty-btn.qty-btn-plus(type="button" id="qty-plus") +
+            
+            .product-detail__actions
+              button.btn.btn-success.btn-lg.btn-add-cart(type="button" id="add-to-cart")
+                | 🛒 Thêm vào giỏ hàng
+              button.btn.btn-outline-primary.btn-lg.btn-wishlist(type="button")
+                | ❤️ Yêu thích
+            
+            .product-detail__shipping
+              .shipping-item
+                span 📦
+                div
+                  strong Giao hàng miễn phí
+                  p Cho đơn hàng từ 500.000đ
+              .shipping-item
+                span 🔄
+                div
+                  strong Đổi trả 30 ngày
+                  p Nếu sản phẩm lỗi từ nhà sản xuất
+              .shipping-item
+                span ✅
+                div
+                  strong Bảo hành chính hãng
+                  p Hỗ trợ toàn bộ quá trình bảo hành
+
+      .row.mt-5
+        .col-12
+          .product-detail__description
+            h3 📝 Mô tả sản phẩm
+            if product.description
+              p= product.description
+            else
+              p Chưa có mô tả sản phẩm
+            
+            .description-details.mt-4
+              h5 Thông tin chi tiết:
+              ul
+                li
+                  strong Tên sản phẩm: 
+                  | #{product.title}
+                li
+                  strong Giá tiền: 
+                  | #{product.price}$
+                li
+                  strong Tồn kho: 
+                  | #{product.stock} sản phẩm
+                li
+                  strong Slug: 
+                  | #{product.slug}
+  else
+    .container.my-5
+      .row
+        .col-12
+          .alert.alert-danger.text-center
+            h3 Sản phẩm không tồn tại
+            p Sản phẩm mà bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
+            a.btn.btn-primary.mt-3(href="/products") ← Quay lại danh sách sản phẩm

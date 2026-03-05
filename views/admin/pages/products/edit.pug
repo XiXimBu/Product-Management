@@ -1,0 +1,66 @@
+extends ../../layouts/default.pug
+
+block main
+  h1 Chỉnh sửa sản phẩm
+
+
+  .card
+    .card-body
+      form(action=`${prefixAdmin}/products/edit/${product._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+        .form-group
+          label Tiêu đề sản phẩm
+          input(type="text" name="title" class="form-control" value=product.title required)
+
+        .form-group
+          label Mô tả
+          textarea(name="description" class="form-control" rows="4")= product.description
+
+        .form-group
+          label Giá (VND)
+          input(type="number" name="price" class="form-control" value=product.price placeholder="Nhập giá sản phẩm" required min="0")
+
+        .form-group
+          label Giảm giá (%)
+          input(type="number" name="discountPercentage" class="form-control" placeholder="Nhập phần trăm giảm giá" min="0" max="100" value=product.discountPercentage)
+
+        .form-group
+          label Số lượng tồn kho
+          input(type="number" name="stock" class="form-control" value=product.stock placeholder="Nhập số lượng" required min="0")
+
+        .form-group(upload-image)
+          label Hình ảnh
+          input(type="file" name="thumbnail" class="form-control-file" placeholder="Chọn hình ảnh" accept="image/*" required)
+          .position-relative(style="display: inline-block;")
+            img(src=product.thumbnail upload-preview style="max-width: 100%; max-height: 300px; margin-top: 10px; display: none;")
+            button(type="button" button-delete-image class="btn btn-sm btn-danger" style="position: absolute; top: 10px; right: 0; display: none;") ✕
+
+        .form-group
+          label Trạng thái
+          div(class="form-group form-check form-check-inline")
+            input(
+              type="radio"
+              class="form-check-input"
+              id="statusActive"
+              name="status"
+              value="active"
+              checked=(product.status === 'active')
+            )
+            label(for="statusActive" class="form-check-label") Hoạt động
+          div(class="form-group form-check form-check-inline")
+            input(
+              type="radio"
+              class="form-check-input"
+              id="statusInactive"
+              name="status"
+              value="inactive"
+              checked=(product.status === 'inactive')
+            )
+            label(for="statusInactive" class="form-check-label") Không hoạt động
+
+        .form-group
+          label Vị trí
+          input(type="number" name="position" class="form-control" placeholder="Nhập vị trí sắp xếp" min="0" value=product.position)
+
+        .form-group
+          button(type="submit" class="btn btn-success") Cập nhật
+          a(href=`${prefixAdmin}/products` class="btn btn-secondary ml-2") Quay lại

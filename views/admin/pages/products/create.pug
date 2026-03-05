@@ -1,0 +1,48 @@
+extends ../../layouts/default.pug
+
+block main
+  h1 Tạo sản phẩm mới
+
+  .card
+    .card-body
+      form(action=`${prefixAdmin}/products/create` method="POST" enctype="multipart/form-data")
+        .form-group
+          label Tiêu đề sản phẩm
+          input(type="text" name="title" class="form-control" placeholder="Nhập tiêu đề sản phẩm" required)
+
+        .form-group
+          label Mô tả
+          textarea(name="description" class="form-control" rows="4" placeholder="Nhập mô tả sản phẩm" required)
+
+        .form-group
+          label Giá (VND)
+          input(type="number" name="price" class="form-control" placeholder="Nhập giá sản phẩm" required min="0")
+
+        .form-group
+          label Giảm giá (%)
+          input(type="number" name="discountPercentage" class="form-control" placeholder="Nhập phần trăm giảm giá" min="0" max="100" value="0")
+
+        .form-group
+          label Số lượng tồn kho
+          input(type="number" name="stock" class="form-control" placeholder="Nhập số lượng" required min="0")
+
+        .form-group(upload-image)
+          label Hình ảnh
+          input(type="file" name="thumbnail" class="form-control-file" placeholder="Chọn hình ảnh" accept="image/*" required)
+          .position-relative(style="display: inline-block;")
+            img(src="" upload-preview style="max-width: 100%; max-height: 300px; margin-top: 10px; display: none;")
+            button(type="button" button-delete-image class="btn btn-sm btn-danger" style="position: absolute; top: 10px; right: 0; display: none;") ✕
+
+        .form-group
+          label Trạng thái
+          select(name="status" class="form-control" required)
+            option(value="active") Hoạt động
+            option(value="inactive") Không hoạt động
+
+        .form-group
+          label Vị trí
+          input(type="number" name="position" class="form-control" placeholder="Nhập vị trí sắp xếp" min="0" value="1")
+
+        .form-group
+          button(type="submit" class="btn btn-success") Tạo sản phẩm
+          a(href=`${prefixAdmin}/products` class="btn btn-secondary ml-2") Quay lại
