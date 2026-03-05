@@ -77,11 +77,13 @@ routeAdmin(app);
 
 
 // ======================
-// 9. Start Server
+// 9. Start Server (Local only)
 // ======================
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
-});
+// Vercel uses serverless functions, so app must be exported without binding a port.
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`App listening on port ${port}`);
+  });
+}
 
-// Export for Vercel serverless
 module.exports = app;
