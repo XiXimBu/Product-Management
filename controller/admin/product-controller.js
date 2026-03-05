@@ -4,6 +4,7 @@ const Product = require('../../models/product-model')
 const filterStatusHelper = require('../../helper/filterStatus')
 const searchStatusHelper = require('../../helper/searchStatus')
 const paginationHelper = require('../../helper/paginationHelper')
+const uploadToCloudinary = require('../../helper/uploadToCloudinary')
 
 // [Get] / admin/products 
 module.exports.product = async (req, res) => {
@@ -202,7 +203,8 @@ module.exports.createPost = async (req, res) => {
       deleted: false
     };
     if (req.file) {
-      productData.thumbnail = req.file.path; // Lấy URL từ Cloudinary
+      const imageUrl = await uploadToCloudinary(req.file)
+      if (imageUrl) productData.thumbnail = imageUrl
     }
 
     const newProduct = new Product(productData);
@@ -252,7 +254,8 @@ module.exports.editPatch = async (req, res) => {
     };
 
     if (req.file) {
-      productData.thumbnail = req.file.path; // Lấy URL từ Cloudinary
+      const imageUrl = await uploadToCloudinary(req.file)
+      if (imageUrl) productData.thumbnail = imageUrl
     }
 
     await Product.updateOne({ _id: req.params.id }, { $set: productData });
