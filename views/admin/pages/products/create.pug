@@ -1,4 +1,5 @@
 extends ../../layouts/default.pug
+include ../../mixins/select-tree.pug
 
 block main
   h1 Tạo sản phẩm mới
@@ -9,6 +10,13 @@ block main
         .form-group
           label Tiêu đề sản phẩm
           input(type="text" name="title" class="form-control" placeholder="Nhập tiêu đề sản phẩm" required)
+
+        .form-group
+          label Danh mục sản phẩm
+          select(name="category_id" class="form-control" required)
+            option(value="") -- Chọn danh mục --
+            if categories && categories.length > 0
+              +selectTree(categories)
 
         .form-group
           label Mô tả

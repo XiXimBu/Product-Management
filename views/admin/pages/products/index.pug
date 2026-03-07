@@ -54,7 +54,7 @@ block main
                     value=item.id
                   )
 
-                td #{index + 1}
+                td #{((pagination && Number(pagination.skip)) || 0) + index + 1}
 
                 td
                   img(

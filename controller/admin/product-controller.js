@@ -5,6 +5,7 @@ const filterStatusHelper = require('../../helper/filterStatus')
 const searchStatusHelper = require('../../helper/searchStatus')
 const paginationHelper = require('../../helper/paginationHelper')
 const uploadToCloudinary = require('../../helper/uploadToCloudinary')
+const getCategoriesTree = require('../../helper/getCategoriesTree')
 
 // [Get] / admin/products 
 module.exports.product = async (req, res) => {
@@ -176,10 +177,15 @@ module.exports.deletePermanent = async (req, res) => {
 // [get] /admin/products/create
 module.exports.create = async (req, res) => {
   try {
+    // Lấy danh sách danh mục dạng cây
+    const categoriesTree = await getCategoriesTree()
+
     res.render("admin/pages/products/create", {
-      pageTitle: "Tạo sản phẩm mới"
+      pageTitle: "Tạo sản phẩm mới",
+      categories: categoriesTree
     });
   } catch (error) {
+    console.error('Error in create:', error)
     req.flash("error", "Có lỗi khi tải form tạo sản phẩm!")
     res.redirect(`${systemConfig.prefixAdmin}/products`)
   }
@@ -195,6 +201,7 @@ module.exports.createPost = async (req, res) => {
     const productData = {
       title: req.body.title,
       description: req.body.description,
+      category_id: req.body.category_id || '',
       price: parseFloat(req.body.price),
       discountPercentage: parseFloat(req.body.discountPercentage) || 0,
       stock: parseInt(req.body.stock),
@@ -202,6 +209,7 @@ module.exports.createPost = async (req, res) => {
       position: parseInt(req.body.position) || (countProducts + 1),
       deleted: false
     };
+    
     if (req.file) {
       const imageUrl = await uploadToCloudinary(req.file)
       if (imageUrl) productData.thumbnail = imageUrl
@@ -213,6 +221,7 @@ module.exports.createPost = async (req, res) => {
     req.flash("success", "Tạo sản phẩm thành công!");
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   } catch (error) {
+    console.error('Error creating product:', error)
     req.flash("error", "Tạo sản phẩm thất bại! Vui lòng kiểm tra lại dữ liệu.");
     res.redirect(`${systemConfig.prefixAdmin}/products/create`);
   }
@@ -221,19 +230,28 @@ module.exports.createPost = async (req, res) => {
 //[Get] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
   try {
-    
-  const find = {
-     deleted: false,
-    _id: req.params.id
-  }
-  const product = await Product.findOne(find);
+    const find = {
+      deleted: false,
+      _id: req.params.id
+    }
+    const product = await Product.findOne(find);
+
+    if (!product) {
+      req.flash("error", "Sản phẩm không tồn tại hoặc đã bị xóa!")
+      return res.redirect(`${systemConfig.prefixAdmin}/products`)
+    }
+
+    // Lấy danh sách danh mục dạng cây
+    const categoriesTree = await getCategoriesTree()
 
     res.render("admin/pages/products/edit", {
-    pageTitle: "Chỉnh sửa sản phẩm",
-    product: product
+      pageTitle: "Chỉnh sửa sản phẩm",
+      product: product,
+      categories: categoriesTree
     });
 
   } catch (error) {
+    console.error('Error in edit:', error)
     req.flash("error", "Sản phẩm không tồn tại hoặc đã bị xóa!")
     res.redirect(`${systemConfig.prefixAdmin}/products`)
   }
@@ -246,6 +264,7 @@ module.exports.editPatch = async (req, res) => {
     const productData = {
       title: req.body.title,
       description: req.body.description,
+      category_id: req.body.category_id || '',
       price: parseFloat(req.body.price),
       discountPercentage: parseFloat(req.body.discountPercentage) || 0,
       stock: parseInt(req.body.stock),
@@ -263,6 +282,7 @@ module.exports.editPatch = async (req, res) => {
     req.flash("success", "Chỉnh sửa sản phẩm thành công!");
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   } catch (error) {
+    console.error('Error editing product:', error)
     req.flash("error", "Chỉnh sửa sản phẩm thất bại! Vui lòng kiểm tra lại dữ liệu.");
     res.redirect(`${systemConfig.prefixAdmin}/products/edit/${req.params.id}`);
   }

@@ -1,4 +1,5 @@
 extends ../../layouts/default.pug
+include ../../mixins/select-tree.pug
 
 block main
   h1 Chỉnh sửa sản phẩm
@@ -8,12 +9,19 @@ block main
     .card-body
       form(action=`${prefixAdmin}/products/edit/${product._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
         .form-group
-          label Tiêu đề sản phẩm
-          input(type="text" name="title" class="form-control" value=product.title required)
+          label(style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;") Tiêu đề sản phẩm
+          textarea(id="titleEditor" name="title" class="tinymce-editor form-control" required)= product.title
 
         .form-group
-          label Mô tả
-          textarea(name="description" class="form-control" rows="4")= product.description
+          label Danh mục sản phẩm
+          select(name="category_id" class="form-control" required)
+            option(value="") -- Chọn danh mục --
+            if categories && categories.length > 0
+              +selectTree(categories, product.category_id)
+
+        .form-group
+          label(style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;") Mô tả
+          textarea(id="descriptionEditor" name="description" class="tinymce-editor form-control" required)= product.description
 
         .form-group
           label Giá (VND)

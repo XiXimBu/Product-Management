@@ -1,0 +1,48 @@
+extends ../../layouts/default.pug
+include ../../mixins/select-tree.pug
+
+block main
+  h1 Chỉnh sửa danh mục: #{category.title}
+
+  .card
+    .card-body
+      form(action=`${prefixAdmin}/categories/edit/${category._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+        .form-group
+          label Tên danh mục (bắt buộc)
+          input.form-control(type="text" name="title" placeholder="VD: Điện thoại" value=category.title required)
+        
+        .form-group
+          label Mô tả danh mục
+          textarea.form-control(name="description" rows="3" placeholder="Mô tả chi tiết về danh mục...")= category.description
+        
+        .form-group(upload-image)
+          label Hình ảnh danh mục
+          input.form-control-file(type="file" name="thumbnail" accept="image/jpeg,image/png,image/gif,image/webp")
+          .position-relative(style="display: inline-block;")
+            if category.thumbnail
+              img(src=category.thumbnail alt=category.title upload-preview style="max-width: 100%; max-height: 300px; margin-top: 10px;")
+            else
+              img(src="" upload-preview style="max-width: 100%; max-height: 300px; margin-top: 10px; display: none;")
+            button(type="button" button-delete-image class="btn btn-sm btn-danger" style="position: absolute; top: 10px; right: 0; display: none;") ✕
+          small.form-text.text-muted Định dạng: JPG, PNG, GIF, WebP. Tối đa 5MB
+        
+        .form-group
+          label Danh mục cha (nếu có)
+          select.form-control(name="parent_id")
+            option(value="") -- Không có danh mục cha --
+            if records && records.length > 0
+              +selectTree(records, category.parent_id)
+        
+        .form-group
+          label Vị trí hiển thị
+          input.form-control(type="number" name="position" placeholder="VD: 1" value=category.position || 1 min="0")
+        
+        .form-group
+          label Trạng thái
+          select.form-control(name="status" required)
+            option(value="active" selected=category.status === 'active') Hoạt động
+            option(value="inactive" selected=category.status === 'inactive') Không hoạt động
+        
+        .form-group
+          button.btn.btn-success(type="submit") Cập nhật danh mục
+          a.btn.btn-secondary.ml-2(href=`${prefixAdmin}/categories`) Quay lại

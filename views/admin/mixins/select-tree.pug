@@ -1,0 +1,13 @@
+//- Mixin selectTree cho dropdown danh mục dạng cây
+mixin selectTree(records, selectedId = '', level = 0)
+  each item in records
+    - var prefix = ''
+    if level > 0
+      - prefix = '|' + '-- '.repeat(level)
+    if selectedId && (item._id.toString() === selectedId.toString())
+      option(value=item._id selected)= prefix + item.title
+    else
+      option(value=item._id)= prefix + item.title
+    if item.children
+      +selectTree(item.children, selectedId, level + 1)
+      

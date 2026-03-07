@@ -2,13 +2,12 @@
 // 1. Core & Third-party Modules
 // ======================
 const express = require('express');
-const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 require('dotenv').config();
-var flash = require('express-flash')
-var session = require('express-session')
-var cookieParser = require('cookie-parser')
+const session = require('express-session')
+const cookieParser = require('cookie-parser')
 const path = require('path')
+const flashMiddleware = require('./middleware/flash.middleware')
 
 
 
@@ -58,7 +57,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { maxAge: 600000 } // 10 phút
 }));
-app.use(flash());
+app.use(flashMiddleware);
 
 // Middleware để truyền flash messages vào locals
 app.use((req, res, next) => {

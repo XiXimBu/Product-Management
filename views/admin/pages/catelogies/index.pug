@@ -1,0 +1,77 @@
+extends ../../layouts/default.pug
+
+//- Mixin đệ quy để hiển thị cây danh mục
+mixin showCategoryTree(records, level = 0)
+  each item in records
+    tr
+      td #{item.index}
+      td 
+        if level > 0
+          span(style=`padding-left: ${level * 20}px;`)= '↳ '
+        = item.title
+      td
+        if item.status === 'active'
+          button.badge.badge-success(
+            data-id=item._id
+            button-change-status
+            style="border: none; cursor: pointer;"
+          ) Hoạt động
+        else
+          button.badge.badge-secondary(
+            data-id=item._id
+            button-change-status
+            style="border: none; cursor: pointer;"
+          ) Không hoạt động
+      td
+        a.btn.btn-sm.btn-info.mr-1(href=`${prefixAdmin}/categories/edit/${item._id}`) Sửa
+        button.btn.btn-sm.btn-danger(
+          data-id=item._id
+          button-delete
+        ) Xóa
+    
+    //- Gọi đệ quy nếu có children
+    if item.children
+      +showCategoryTree(item.children, level + 1)
+
+block main
+  h1.mb-4 Quản lý danh mục sản phẩm
+
+  .card
+    .card-header
+      .d-flex.justify-content-between.align-items-center
+        span Danh sách danh mục
+        a.btn.btn-primary.btn-sm(href=`${prefixAdmin}/categories/create`) + Thêm danh mục
+    
+    .card-body
+      table.table.table-hover
+        thead.bg-light
+          tr
+            th STT
+            th Tên danh mục
+            th Trạng thái
+            th Thao tác
+        tbody
+          if records && records.length > 0
+            +showCategoryTree(records)
+          else
+            tr
+              td.text-center.text-muted(colspan="4")
+                em Chưa có dữ liệu
+
+  // ===== Form change status ẩn =====
+  form(
+    action=""
+    method="POST"
+    id="form-change-status"
+    data-path=`${prefixAdmin}/categories/change-status`
+  )
+  
+  // ===== Form delete ẩn =====
+  form(
+    action=""
+    method="POST"
+    id="form-delete"
+    data-path=`${prefixAdmin}/categories/delete`
+  )
+
+  script(src="/admin/script/categories-status.js")
