@@ -6,20 +6,48 @@ html
         link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
         
     body
-       
+       if (user.permissions.length > 0)
         include ../partials/header.pug
 
         .body 
             include ../partials/sider.pug
             .main
                 .container-fluid.mt-3
-                    include ../partials/flash-messages.pug
+                        include ../partials/flash-messages.pug
+                        // client-side flash container
+                        #client-flash-container
                 block main  
 
-        footer Footer Admin
+        footer
+            .container
+                .col
+                    h4 Company
+                    p.small= system && system.company ? system.company : 'Your company description or tagline.'
+                .col
+                    h4 Quick Links
+                    ul
+                        li: a(href=`${prefixAdmin}/dashboard`) Dashboard
+                        li: a(href=`${prefixAdmin}/product`) Products
+                        li: a(href=`${prefixAdmin}/product-categories`) Categories
+                .col
+                    h4 Help
+                    ul
+                        li: a(href='#') Documentation
+                        li: a(href='#') Support
+                        li: a(href='#') Contact
+                .bottom
+                    .small © #{new Date().getFullYear()} #{system && system.name ? system.name : 'Admin Panel'}. All rights reserved.
+                    .social
+                        a(href='#') 🔗
+                        a(href='#') 🔗
+                        a(href='#') 🔗
+                        
         script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js") 
         script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js")
         script(src="/admin/script/script.js") 
         script(src="/admin/script/product-status.js")
         script(src="/admin/script/trash.js")
+        script(src="/admin/script/role-permissions.js")
+        // allow pages to append additional scripts
+        block scripts
         

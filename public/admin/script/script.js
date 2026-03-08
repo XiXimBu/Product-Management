@@ -113,14 +113,27 @@ if (buttonsDelete.length > 0) {
     const formDelete = document.querySelector("#form-delete")
     const path = formDelete.getAttribute("data-path")
 
+    // helper to ensure _method hidden input
+    function ensureMethodInput(form, method) {
+        let input = form.querySelector("input[name='_method']")
+        if (!input) {
+            input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = '_method'
+            form.appendChild(input)
+        }
+        input.value = method
+    }
+
     buttonsDelete.forEach((button) => {
         button.addEventListener("click", () => {
             const isConfirm = confirm("Bạn có chắc muốn xóa sản phẩm này?")
             if (!isConfirm) return
 
             const id = button.getAttribute("data-id")
-            const action = `${path}/${id}?_method=DELETE`
+            const action = `${path}/${id}`
             formDelete.setAttribute("action", action)
+            ensureMethodInput(formDelete, 'DELETE')
             formDelete.submit()
         })
     })

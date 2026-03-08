@@ -1,0 +1,53 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") Thêm mới tài khoản người dùng
+
+  .card
+    .card-body
+      form(action=`${prefixAdmin}/accounts/create` method="POST" enctype="multipart/form-data")
+        .form-group
+          label(for="fullName") Họ và tên
+          input#fullName.form-control(type="text" name="fullName" required value=(data && data.fullName) ? data.fullName : '')
+
+        .form-group
+          label(for="email") Email
+          input#email.form-control(type="email" name="email" required value=(data && data.email) ? data.email : '')
+
+        .form-group
+          label(for="password") Mật khẩu
+          input#password.form-control(type="password" name="password" required)
+
+        .form-group
+          label(for="phone") Số điện thoại
+          input#phone.form-control(type="text" name="phone" value=(data && data.phone) ? data.phone : '')
+
+        .form-group
+          label(for="avatar") Ảnh đại diện
+          input#avatar.form-control-file(type="file" name="avatar" accept="image/*")
+          .avatar-preview.mt-2
+            img#avatarPreview(src="" alt="preview" style="display:none;max-width:150px;border-radius:6px;")
+            button#avatarRemove.btn.btn-sm.btn-danger.ml-2(type="button" style="display:none;") Xóa ảnh
+
+        .form-group
+          label(for="role_id") Vai trò
+          if typeof roles !== 'undefined' && roles.length
+            select#role_id.form-control(name="role_id")
+              option(value="") -- Chọn vai trò --
+              each r in roles
+                option(value=r._id selected=(data && data.role_id==r._id)? true : false)= r.name
+          else
+            select#role_id.form-control(name="role_id")
+              option(value="") Không có vai trò
+
+        .form-group
+          label(for="status") Trạng thái
+          select#status.form-control(name="status")
+            option(value="active" selected=(data && data.status=='active')? true : false) Hoạt động
+            option(value="inactive" selected=(data && data.status=='inactive')? true : false) Ngừng hoạt động
+
+        button.btn.btn-primary(type="submit") Tạo
+        a.btn.btn-secondary.ml-2(href=`${prefixAdmin}/accounts`) Huỷ
+
+      block scripts
+        script(src="/admin/script/avatar-preview.js")

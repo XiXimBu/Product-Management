@@ -1,0 +1,58 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") Chỉnh sửa tài khoản
+
+  .card
+    .card-body
+      form(action=`${prefixAdmin}/accounts/edit/${account._id}` method="POST" enctype="multipart/form-data")
+
+        .form-group
+          label(for="fullName") Họ và tên
+          input#fullName.form-control(type="text" name="fullName" required value=account.fullName)
+
+        .form-group
+          label(for="email") Email
+          input#email.form-control(type="email" name="email" required value=account.email)
+
+        .form-group
+          label(for="password") Mật khẩu mới
+          input#password.form-control(type="password" name="password" placeholder="Để trống nếu không đổi")
+
+        .form-group
+          label(for="phone") Số điện thoại
+          input#phone.form-control(type="text" name="phone" value=account.phone || '')
+
+        .form-group
+          label Ảnh đại diện hiện tại
+          if account.avatar
+            .mb-2
+              img#avatarPreview(src=account.avatar alt="avatar" style="max-width:150px;border-radius:6px;")
+          else
+            p.text-muted Chưa có ảnh
+
+          label.mt-2(for="avatar") Thay ảnh mới
+          input#avatarNew.form-control-file(type="file" name="avatar" accept="image/*")
+
+        .form-group
+          label(for="role_id") Vai trò
+          if typeof roles !== 'undefined' && roles.length
+            select#role_id.form-control(name="role_id")
+              option(value="") -- Chọn vai trò --
+              each r in roles
+                option(value=String(r._id) selected=(String(account.role_id) == String(r._id)))= r.name
+          else
+            select#role_id.form-control(name="role_id")
+              option(value="") Không có vai trò
+
+        .form-group
+          label(for="status") Trạng thái
+          select#status.form-control(name="status")
+            option(value="active" selected=(account.status == 'active')) Hoạt động
+            option(value="inactive" selected=(account.status == 'inactive')) Ngừng hoạt động
+
+        button.btn.btn-primary(type="submit") Lưu thay đổi
+        a.btn.btn-secondary.ml-2(href=`${prefixAdmin}/accounts`) Huỷ
+
+  block scripts
+    script(src="/admin/script/avatar-preview.js")

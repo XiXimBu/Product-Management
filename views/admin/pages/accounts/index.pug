@@ -1,0 +1,53 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") Tài khoản người dùng
+
+  .card.mb-3
+    .card-header Danh sách
+    .card-body
+      .row
+        .col-8
+        .col-4.text-right
+          if hasPermission && hasPermission('role_create')
+            a.btn.btn-success(href=`${prefixAdmin}/accounts/create`)
+              | + Tạo mới
+
+      if records && records.length
+        .table-responsive.mt-3
+          table.table.table-striped.table-hover
+            thead
+              tr
+                th Ảnh
+                th Tên
+                th Email
+                th SĐT
+                th Vai trò
+                th Trạng thái
+                th.text-center Hành động
+            tbody
+              each acc in records
+                tr
+                  td
+                    - var thumb = acc.avatar ? acc.avatar.replace('/upload/', '/upload/w_48,h_48,c_fill/') : null
+                    if thumb
+                      img(src=thumb alt=acc.fullName style='width:48px;height:48px;object-fit:cover;border-radius:4px;')
+                    else
+                      span.text-muted -
+                  td= acc.fullName || '-'
+                  td= acc.email || '-'
+                  td= acc.phone || '-'
+                  td= acc.roleName || acc.role_id || '-'
+                  td
+                    if acc.status === 'active'
+                      span.badge.badge-success Hoạt động
+                    else
+                      span.badge.badge-secondary Ngừng hoạt động
+                  td.text-center
+                    if hasPermission && hasPermission('role_edit')
+                      a.btn.btn-sm.btn-primary(href=`${prefixAdmin}/accounts/edit/${acc._id}`) Chỉnh sửa
+                    if hasPermission && hasPermission('role_delete')
+                      a.btn.btn-sm.btn-danger.ml-1(href=`${prefixAdmin}/accounts/delete/${acc._id}`) Xóa
+      else
+        .alert.alert-info.text-center.mt-3
+          p.mb-0 Chưa có tài khoản nào.

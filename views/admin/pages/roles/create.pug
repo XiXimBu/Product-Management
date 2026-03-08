@@ -1,0 +1,82 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") Tạo nhóm quyền
+
+  .card.mb-3
+    .card-header Thông tin nhóm quyền
+    .card-body
+      form(action=`${prefixAdmin}/roles/create` method="POST")
+        
+        .form-group
+          label Tên nhóm quyền (bắt buộc)
+          input.form-control(type="text" name="name" placeholder="VD: Quản trị viên" required)
+          
+        .form-group
+          label Mô tả nhóm quyền
+          textarea.form-control(name="description" rows="3" placeholder="Mô tả chi tiết về nhóm quyền...")
+        
+        .form-group
+          label Phân quyền
+          
+          if permissions && permissions.length > 0
+            - const grouped = {}
+            - permissions.forEach(perm => {
+            -   if (!grouped[perm.category]) grouped[perm.category] = []
+            -   grouped[perm.category].push(perm)
+            - })
+            
+            - const categories = Object.keys(grouped).sort()
+            
+            .row
+              - categories.forEach(category => {
+                .col-md-6.mb-4
+                  .card.border-primary
+                    .card-header.bg-primary.text-white.d-flex.justify-content-between.align-items-center
+                      h5.mb-0 #{category}
+                      span.badge.badge-light(class=`badge-${category.replace(/\s+/g, '-')}`)
+                        = `0/${grouped[category].length}`
+                    
+                    .card-body
+                      .form-check.mb-2
+                        input.form-check-input(
+                          type="checkbox"
+                          id=`select-all-${category.replace(/\s+/g, '-')}`
+                          class="select-all-category"
+                          data-category=category
+                        )
+                        label.form-check-label.font-weight-bold(for=`select-all-${category.replace(/\s+/g, '-')}`)
+                          | Chọn tất cả
+                      
+                      hr.my-2
+                      
+                      - grouped[category].forEach((permission, idx) => {
+                        .form-check.mb-2
+                          input.form-check-input.permission-checkbox(
+                            type="checkbox" 
+                            name="permissions" 
+                            id=`perm_${permission.id}` 
+                            value=permission.id
+                            data-category=category
+                            class=`category-${category.replace(/\s+/g, '-')}`
+                          )
+                          label.form-check-label(for=`perm_${permission.id}`)
+                            .d-flex.justify-content-between.align-items-center.w-100
+                              span= permission.name
+                              span.badge.badge-success(style="display: none;") ✓
+                      - })
+              - })
+          else
+            .alert.alert-warning
+              p.mb-0 Không có quyền nào để cấp phát
+            
+        .form-group.mt-4
+          button.btn.btn-success.btn-lg(type="submit")
+            i.fas.fa-plus
+            |  Tạo nhóm quyền
+          a.btn.btn-secondary.btn-lg.ml-2(href=`${prefixAdmin}/roles`)
+            i.fas.fa-arrow-left
+            |  Quay lại
+
+block scripts
+  script(src="/admin/script/role-permissions.js")

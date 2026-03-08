@@ -31,3 +31,22 @@ module.exports.uploadThumbnail = (req, res, next) => {
 		next()
 	})
 }
+
+module.exports.uploadAvatar = (req, res, next) => {
+	upload.single('avatar')(req, res, (error) => {
+		if (error) {
+			req.flash('error', 'Ảnh không hợp lệ (jpg/png/gif/webp, tối đa 5MB)!')
+			return res.redirect(`${systemConfig.prefixAdmin}/accounts/create`)
+		}
+		next()
+	})
+}
+
+module.exports.uploadAvatarApi = (req, res, next) => {
+	upload.single('avatar')(req, res, (error) => {
+		if (error) {
+			return res.status(400).json({ message: 'Ảnh không hợp lệ (jpg/png/gif/webp, tối đa 5MB)!' })
+		}
+		next()
+	})
+}

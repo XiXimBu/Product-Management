@@ -23,11 +23,13 @@ mixin showCategoryTree(records, level = 0)
             style="border: none; cursor: pointer;"
           ) Không hoạt động
       td
-        a.btn.btn-sm.btn-info.mr-1(href=`${prefixAdmin}/categories/edit/${item._id}`) Sửa
-        button.btn.btn-sm.btn-danger(
-          data-id=item._id
-          button-delete
-        ) Xóa
+        if hasPermission && hasPermission('category_edit')
+          a.btn.btn-sm.btn-info.mr-1(href=`${prefixAdmin}/categories/edit/${item._id}`) Sửa
+        if hasPermission && hasPermission('category_delete')
+          button.btn.btn-sm.btn-danger(
+            data-id=item._id
+            button-delete
+          ) Xóa
     
     //- Gọi đệ quy nếu có children
     if item.children
@@ -40,7 +42,11 @@ block main
     .card-header
       .d-flex.justify-content-between.align-items-center
         span Danh sách danh mục
-        a.btn.btn-primary.btn-sm(href=`${prefixAdmin}/categories/create`) + Thêm danh mục
+        .button-group
+          if hasPermission && hasPermission('category_view')
+            a.btn.btn-warning.btn-sm.ml-2(href=`${prefixAdmin}/categories/trash`) Thùng rác
+          if hasPermission && hasPermission('category_create')
+            a.btn.btn-primary.btn-sm.ml-2(href=`${prefixAdmin}/categories/create`) + Thêm danh mục
     
     .card-body
       table.table.table-hover

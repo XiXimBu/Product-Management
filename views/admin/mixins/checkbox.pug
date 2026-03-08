@@ -1,9 +1,11 @@
-mixin checkbox(action)
+mixin checkbox(action, method='POST')
   form(
     action=action
     method="POST"
     form-change-multi
   )
+    if method && method.toUpperCase() !== 'POST'
+      input(type='hidden' name='_method' value=method)
     .d-flex.align-items-start.mb-3
       .form-group.mr-2
         select(name="type" class="form-control")
@@ -17,7 +19,6 @@ mixin checkbox(action)
           name="ids"
           value=""
           class="form-control d-none"
-    
         )
 
       button(type="submit" class="btn btn-primary") Áp dụng

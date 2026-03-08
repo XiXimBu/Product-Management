@@ -1,0 +1,90 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") Nhóm quyền
+
+  .card.mb-3
+    .card-header.d-flex.justify-content-between.align-items-center
+      span Danh sách
+      if hasPermission && hasPermission('role_create')
+        a(href=`${prefixAdmin}/roles/create` class="btn btn-success btn-sm")
+          i.fas.fa-plus
+          |  Tạo mới
+
+    .card-body
+      if records && records.length > 0
+        .table-responsive
+          table.table.table-hover.table-striped
+            thead.table-light
+              tr
+                th(width="20%") Tên
+                th(width="20%") Mô tả
+                th(width="10%") Trạng thái
+                th(width="20%") Người tạo
+                th(width="15%") Ngày tạo
+                th(width="30%") Quyền
+                th(width="15%").text-center Hành động
+            tbody
+              each role, idx in records
+                tr
+                  td
+                    strong.text-primary= role.name
+                  td
+                    if role.description
+                      span(title=role.description)= role.description.substring(0, 50) + (role.description.length > 50 ? '...' : '')
+                    else
+                      span.text-muted -
+                  td
+                    if role.status === 'active'
+                      span.badge.badge-success.p-2 Hoạt động
+                    else
+                      span.badge.badge-secondary.p-2 Ngừng hoạt động
+                  td
+                    = role.createdByName
+                  td
+                    = role.createdAtFormatted
+                  td
+                    - const pnames = role.permissionNames || []
+                    if pnames && pnames.length > 0
+                      - const displayPerms = pnames.slice(0, 2)
+                      - const hiddenCount = pnames.length - displayPerms.length
+
+                      each perm in displayPerms
+                        span.badge.badge-info.mr-1.mb-1(data-toggle="tooltip" data-placement="top" title=perm)
+                          = perm
+
+                      if hiddenCount > 0
+                        button.btn.btn-sm.btn-outline-secondary.mb-1(
+                          type="button"
+                          data-toggle="popover"
+                          data-trigger="hover"
+                          data-html="true"
+                          title="Các quyền khác"
+                          data-content=pnames.slice(2).map(p => `<span class='badge badge-info mr-1 mb-1'>${p}</span>`).join('')
+                        )
+                          = `+${hiddenCount} quyền khác`
+                    else
+                      span.text-muted.font-italic Không có quyền
+
+                  td.text-center
+                    if hasPermission && hasPermission('role_edit')
+                      a.btn.btn-primary(href=`${prefixAdmin}/roles/edit/${role._id}` title="Chỉnh sửa")
+                        i.fas.fa-edit
+                        |  Chỉnh sửa
+                    if hasPermission && hasPermission('role_delete')
+                      button.btn.btn-danger.ml-1(
+                        type="button"
+                        data-role-delete
+                        data-role-id=role._id
+                        data-role-name=role.name
+                        title="Xóa"
+                      )
+                        i.fas.fa-trash
+                        |  Xóa
+      else
+        .alert.alert-info.text-center
+          p.mb-0 Chưa có vai trò nào.
+          a(href=`${prefixAdmin}/roles/create`) Tạo vai trò mới
+
+block scripts
+  script(src="/admin/script/role-delete.js")

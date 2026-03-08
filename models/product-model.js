@@ -18,6 +18,15 @@ const productSchema = new mongoose.Schema(
   status: String,
   position: Number,
   deleted: Boolean,
+  // Audit fields
+  createdBy: {
+    id: { type: String, default: null },
+    name: { type: String, default: '' }
+  },
+  updatedBy: {
+    id: { type: String, default: null },
+    name: { type: String, default: '' }
+  },
   slug: { type: String, slug: "title", unique: true },
   deletedAt: Date
 }

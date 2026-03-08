@@ -3,29 +3,37 @@ const route = express.Router()
 const controller = require('../../controller/admin/product-controller')
 const validate = require('../../validate/admin/product-validate')
 const uploadMiddleware = require('../../middleware/admin/upload.middleware')
+const permission = require('../../middleware/admin/permission.middleware')
 
-route.get('/', controller.product)
+route.get('/', permission.requirePermission('product_view'), controller.product)
 
-route.get('/edit/:id', controller.edit)
+route.get('/edit/:id', permission.requirePermission('product_edit'), controller.edit)
 
-route.get('/detail/:id', controller.detail)
+route.get('/detail/:id', permission.requirePermission('product_view'), controller.detail)
 
-route.patch('/edit/:id', uploadMiddleware.uploadThumbnail, validate.CreatPost, controller.editPatch)
+// Support POST -> PATCH conversion for edit (via method-override)
+// Support POST -> PATCH conversion for edit (via method-override)
+route.post('/edit/:id', permission.requirePermission('product_edit'), uploadMiddleware.uploadThumbnail, validate.CreatPost, controller.editPatch)
 
-route.get('/trash', controller.trash)
+route.patch('/edit/:id', permission.requirePermission('product_edit'), uploadMiddleware.uploadThumbnail, validate.CreatPost, controller.editPatch)
 
-route.get('/create', controller.create)
+route.get('/trash', permission.requirePermission('product_view'), controller.trash)
 
-route.post('/create', uploadMiddleware.uploadThumbnail, validate.CreatPost, controller.createPost)
+route.get('/create', permission.requirePermission('product_create'), controller.create)
 
-route.patch('/change-status/:status/:id', controller.changeStatus)
+route.post('/create', permission.requirePermission('product_create'), uploadMiddleware.uploadThumbnail, validate.CreatPost, controller.createPost)
 
-route.patch('/change-multi', controller.changeMulti)
+// Support POST -> PATCH for status changes
+route.post('/change-status/:status/:id', permission.requirePermission('product_edit'), controller.changeStatus)
+route.patch('/change-status/:status/:id', permission.requirePermission('product_edit'), controller.changeStatus)
 
-route.delete('/delete/:id', controller.delete)
+route.post('/change-multi', permission.requirePermission('product_edit'), controller.changeMulti)
+route.patch('/change-multi', permission.requirePermission('product_edit'), controller.changeMulti)
 
-route.patch('/restore/:id', controller.restore)
+route.delete('/delete/:id', permission.requirePermission('product_delete'), controller.delete)
 
-route.delete('/delete-permanent/:id', controller.deletePermanent)
+route.patch('/restore/:id', permission.requirePermission('product_delete'), controller.restore)
+
+route.delete('/delete-permanent/:id', permission.requirePermission('product_delete'), controller.deletePermanent)
 
 module.exports = route

@@ -9,8 +9,6 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 const flashMiddleware = require('./middleware/flash.middleware')
 
-
-
 // ======================
 // 2. App Initialization
 // ======================
@@ -48,7 +46,12 @@ app.locals.prefixAdmin = systemConfig.prefixAdmin;
 // 7. Middlewares
 // ======================
 app.use(express.urlencoded({ extended: true })); // Parse form data
-app.use(methodOverride('_method')); // Support PUT/PATCH/DELETE via ?_method=
+// Support method override from body field `_method` (hidden input)
+app.use(methodOverride('_method'));
+// Also support method override via query string `?_method=PATCH` used by some scripts
+app.use(methodOverride((req) => {
+  if (req.query && req.query._method) return req.query._method
+}));
 app.use(express.static(path.join(__dirname, 'public'))); // Static files (css, js, images)
 app.use(cookieParser(process.env.KEY_BOARD_CAT));
 app.use(session({
@@ -74,7 +77,6 @@ const routeAdmin = require('./routes/admin/index-route');
 
 routeClient(app);
 routeAdmin(app);
-
 
 // ======================
 // 9. Start Server (Local only)

@@ -10,8 +10,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('form-change-status')
         const path = form.getAttribute('data-path')
 
-        form.action = `${path}/${id}?_method=PATCH`
+        form.action = `${path}/${id}`
         form.method = 'POST'
+        // ensure hidden _method input exists
+        let input = form.querySelector("input[name='_method']")
+        if (!input) {
+          input = document.createElement('input')
+          input.type = 'hidden'
+          input.name = '_method'
+          form.appendChild(input)
+        }
+        input.value = 'PATCH'
         form.submit()
       })
     })
@@ -28,8 +37,16 @@ document.addEventListener('DOMContentLoaded', function() {
           const form = document.getElementById('form-delete')
           const path = form.getAttribute('data-path')
 
-          form.action = `${path}/${id}?_method=DELETE`
+          form.action = `${path}/${id}`
           form.method = 'POST'
+          let input = form.querySelector("input[name='_method']")
+          if (!input) {
+            input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = '_method'
+            form.appendChild(input)
+          }
+          input.value = 'DELETE'
           form.submit()
         }
       })

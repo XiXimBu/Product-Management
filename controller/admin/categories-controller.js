@@ -186,3 +186,50 @@ module.exports.delete = async (req, res) => {
     return res.redirect(`${systemConfig.prefixAdmin}/categories`)
   }
 }
+
+// [Get] /admin/categories/trash
+module.exports.trash = async (req, res) => {
+  try {
+    const find = { deleted: true }
+    const categories = await ProductCategory.find(find)
+
+    res.render('admin/pages/catelogies/trash', {
+      pageTitle: 'Thùng rác danh mục',
+      categories: categories
+    })
+  } catch (error) {
+    console.error('Error loading categories trash:', error)
+    req.flash('error', 'Có lỗi khi tải thùng rác danh mục!')
+    return res.redirect(`${systemConfig.prefixAdmin}/categories`)
+  }
+}
+
+// [Patch] /admin/categories/restore/:id
+module.exports.restore = async (req, res) => {
+  try {
+    await ProductCategory.updateOne({ _id: req.params.id }, { deleted: false })
+    req.flash('success', 'Đã khôi phục danh mục thành công!')
+    const referer = req.get('referer') || `${systemConfig.prefixAdmin}/categories/trash`
+    return res.redirect(referer)
+  } catch (error) {
+    console.error('Error restoring category:', error)
+    req.flash('error', 'Khôi phục danh mục thất bại!')
+    const referer = req.get('referer') || `${systemConfig.prefixAdmin}/categories/trash`
+    return res.redirect(referer)
+  }
+}
+
+// [Delete] /admin/categories/delete-permanent/:id
+module.exports.deletePermanent = async (req, res) => {
+  try {
+    await ProductCategory.deleteOne({ _id: req.params.id })
+    req.flash('warning', 'Đã xóa vĩnh viễn danh mục!')
+    const referer = req.get('referer') || `${systemConfig.prefixAdmin}/categories/trash`
+    return res.redirect(referer)
+  } catch (error) {
+    console.error('Error deleting category permanent:', error)
+    req.flash('error', 'Xóa vĩnh viễn danh mục thất bại!')
+    const referer = req.get('referer') || `${systemConfig.prefixAdmin}/categories/trash`
+    return res.redirect(referer)
+  }
+}

@@ -1,5 +1,6 @@
 const systemConfig = require('../../config/system')
 const Product = require('../../models/product-model')
+const moment = require('moment')
 
 const filterStatusHelper = require('../../helper/filterStatus')
 const searchStatusHelper = require('../../helper/searchStatus')
@@ -36,7 +37,15 @@ module.exports.product = async (req, res) => {
     }, req.query,
       countProduct);
 
-    const products = await Product.find(find).limit(objectPagination.limitItems).skip(objectPagination.skip);
+    const products = await Product.find(find).limit(objectPagination.limitItems).skip(objectPagination.skip).lean();
+
+    // Attach createdBy name and formatted createdAt for display
+    products.forEach(p => {
+      p.createdByName = p.createdBy && p.createdBy.name ? p.createdBy.name : '-'
+      p.createdAtFormatted = p.createdAt ? moment(p.createdAt).format('YYYY-MM-DD HH:mm') : '-'
+      p.updatedByName = p.updatedBy && p.updatedBy.name ? p.updatedBy.name : '-'
+      p.updatedAtFormatted = p.updatedAt ? moment(p.updatedAt).format('YYYY-MM-DD HH:mm') : '-'
+    })
 
     res.render("admin/pages/products/index", {
       pageTitle: "Trang danh sách sản phẩm",
@@ -215,7 +224,9 @@ module.exports.createPost = async (req, res) => {
       if (imageUrl) productData.thumbnail = imageUrl
     }
 
-    const newProduct = new Product(productData);
+    const actor = req.user ? { id: String(req.user._id), name: req.user.fullName } : { id: null, name: 'unknown' }
+
+    const newProduct = new Product(Object.assign(productData, { createdBy: actor }))
     await newProduct.save();
 
     req.flash("success", "Tạo sản phẩm thành công!");
@@ -243,6 +254,10 @@ module.exports.edit = async (req, res) => {
 
     // Lấy danh sách danh mục dạng cây
     const categoriesTree = await getCategoriesTree()
+
+    // Attach updater display fields
+    product.updatedByName = product.updatedBy && product.updatedBy.name ? product.updatedBy.name : '-'
+    product.updatedAtFormatted = product.updatedAt ? moment(product.updatedAt).format('YYYY-MM-DD HH:mm') : '-'
 
     res.render("admin/pages/products/edit", {
       pageTitle: "Chỉnh sửa sản phẩm",
@@ -277,7 +292,8 @@ module.exports.editPatch = async (req, res) => {
       if (imageUrl) productData.thumbnail = imageUrl
     }
 
-    await Product.updateOne({ _id: req.params.id }, { $set: productData });
+    const actor = req.user ? { id: String(req.user._id), name: req.user.fullName } : { id: null, name: 'unknown' }
+    await Product.updateOne({ _id: req.params.id }, { $set: Object.assign(productData, { updatedBy: actor }) });
 
     req.flash("success", "Chỉnh sửa sản phẩm thành công!");
     res.redirect(`${systemConfig.prefixAdmin}/products`);

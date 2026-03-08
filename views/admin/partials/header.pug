@@ -1,1 +1,24 @@
-header Header Admin
+header
+    .header-inner
+        .header-left
+            .brand
+                img.logo(src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoWKFywY2sdplmFODr_SiDwu7hx2iZOzoJqw&s" alt="Logo")
+                .brand-text
+                    span #{system && system.name ? system.name : 'Admin Panel'}
+                    if system && system.subtitle
+                        .subtitle= system.subtitle
+        .header-center
+        .actions
+            a.action-btn(href=`${prefixAdmin}/notifications`)
+                span.icon 🔔
+                span.badge 3
+            a.action-btn(href=`${prefixAdmin}/profile`)
+                .user
+                    if user && user.avatar
+                        img(src=user.avatar alt='avatar')
+                    else
+                        img(src='/admin/images/default-avatar.png' alt='avatar')
+                    span= user && user.fullName ? user.fullName : 'Bạn'
+            a.action-btn(href=`${prefixAdmin}/auth/logout`)
+                span.icon 🚪
+                | Đăng xuất

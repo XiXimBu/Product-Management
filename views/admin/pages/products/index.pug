@@ -22,35 +22,39 @@ block main
     .card-header
       .d-flex.justify-content-between.align-items-center
         span Danh sách sản phẩm
-        a(href=`${prefixAdmin}/products/create` class="btn btn-primary btn-sm") + Thêm sản phẩm
+        if hasPermission && hasPermission('product_create')
+          a(href=`${prefixAdmin}/products/create` class="btn btn-primary btn-sm") + Thêm sản phẩm
 
     .card-body
 
       // ===== Form change multi =====
-      +checkbox(`${prefixAdmin}/products/change-multi?_method=PATCH`)
+      +checkbox(`${prefixAdmin}/products/change-multi`, 'PATCH')
 
       // ===== Table =====
-      table(class ="table table-hover table-sm"
-            checkbox-multi
-      )
+      .table-wrapper
+        table(class ="table table-hover table-sm" checkbox-multi)
           thead
-            tr
-              th
-                input(type="checkbox" data-checkall)
-              th STT
-              th Hình ảnh
-              th Tiêu đề
-              th Giá
-              th Trạng thái
-              th Hành động
+              tr
+                th
+                  input(type="checkbox" data-checkall)
+                th STT
+                th Hình ảnh
+                th Tiêu đề
+                th Giá
+                th Người tạo
+                th Ngày tạo
+                th Người cập nhật
+                th Ngày cập nhật
+                th Trạng thái
+                th Hành động
 
           tbody
             each item, index in products
               tr
                 td
                   input(
-                    type="checkbox"                   
-                    data-checkbox 
+                    type="checkbox"
+                    data-checkbox
                     value=item.id
                   )
 
@@ -65,6 +69,10 @@ block main
 
                 td #{item.title}
                 td #{item.price}$
+                td= item.createdByName || '-'
+                td= item.createdAtFormatted || '-'
+                td= item.updatedByName || '-'
+                td= item.updatedAtFormatted || '-'
 
                 td
                   if item.status == "active"
@@ -81,16 +89,11 @@ block main
                     ) Không hoạt động
 
                 td
-                  a.btn.btn-info.btn-sm(
-                    href=`${prefixAdmin}/products/detail/${item._id}`
-                  ) Chi tiết
-                  a.btn.btn-warning.btn-sm.ml-1(
-                    href=`${prefixAdmin}/products/edit/${item._id}`
-                  ) Sửa 
-                  button.btn.btn-danger.btn-sm.ml-1(
-                    button-delete
-                    data-id=item._id
-                  ) Xóa
+                  a.btn.btn-info.btn-sm(href=`${prefixAdmin}/products/detail/${item._id}`) Chi tiết
+                  if hasPermission && hasPermission('product_edit')
+                    a.btn.btn-warning.btn-sm.ml-1(href=`${prefixAdmin}/products/edit/${item._id}`) Sửa
+                  if hasPermission && hasPermission('product_delete')
+                    button.btn.btn-danger.btn-sm.ml-1(button-delete data-id=item._id) Xóa
 
       +pagination(pagination, filterStatus)
 

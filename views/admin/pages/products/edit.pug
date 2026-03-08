@@ -4,10 +4,15 @@ include ../../mixins/select-tree.pug
 block main
   h1 Chỉnh sửa sản phẩm
 
+  if product.updatedByName || product.updatedAtFormatted
+    p(style="font-size:0.9rem; color:#666; margin-bottom: 12px;")
+      | Cập nhật bởi: #{product.updatedByName}  |  Lần cập nhật: #{product.updatedAtFormatted}
+
 
   .card
     .card-body
-      form(action=`${prefixAdmin}/products/edit/${product._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+      form(action=`${prefixAdmin}/products/edit/${product._id}` method="POST" enctype="multipart/form-data")
+        input(type="hidden" name="_method" value="PATCH")
         .form-group
           label(style="display: block; font-weight: 600; margin-bottom: 8px; color: #333;") Tiêu đề sản phẩm
           textarea(id="titleEditor" name="title" class="tinymce-editor form-control" required)= product.title
@@ -37,7 +42,8 @@ block main
 
         .form-group(upload-image)
           label Hình ảnh
-          input(type="file" name="thumbnail" class="form-control-file" placeholder="Chọn hình ảnh" accept="image/*" required)
+          // remove required so existing image is kept if no file uploaded
+          input(type="file" name="thumbnail" class="form-control-file" placeholder="Chọn hình ảnh" accept="image/*")
           .position-relative(style="display: inline-block;")
             img(src=product.thumbnail upload-preview style="max-width: 100%; max-height: 300px; margin-top: 10px; display: none;")
             button(type="button" button-delete-image class="btn btn-sm btn-danger" style="position: absolute; top: 10px; right: 0; display: none;") ✕

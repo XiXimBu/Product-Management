@@ -1,0 +1,48 @@
+/* Login page styles */
+html, body {
+  height: 100%;
+}
+body.login-bg {
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  color: #fff;
+}
+.login-card {
+  width: 420px;
+  max-width: calc(100% - 40px);
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 8px 30px rgba(2,12,27,0.6);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.login-card h2 {
+  margin-bottom: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+.form-control {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff;
+}
+.form-control::placeholder { color: rgba(255,255,255,0.6); }
+.btn-login {
+  background: linear-gradient(90deg,#00c6ff 0%,#0072ff 100%);
+  border: none;
+  color: white;
+}
+.login-footer {
+  margin-top: 14px;
+  text-align: center;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+}
+@media (max-width: 480px) {
+  .login-card { padding: 18px; }
+}
